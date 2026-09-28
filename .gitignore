@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+
+# PNPM
+.pnpm-store/
+
+# Build output
+dist/
+build/
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Turbo
+.turbo/
+
+# Cache
+.cache/
+.eslintcache
+
+# Jest
+coverage/
+
+# Temporary files
+tmp/
+temp/
+
+# Husky
+.husky/_
+
+# Uploads (if applicable)
+uploads/
+
+# MinIO local data (if mounted locally)
+minio-data/
+
+# PostgreSQL local data (if mounted locally)
+postgres-data/
+
+# Docker
+*.pid
+docker-compose.override.yml

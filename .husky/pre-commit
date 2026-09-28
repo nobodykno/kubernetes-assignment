@@ -1,0 +1,10 @@
+
+export NVM_DIR="$HOME/.nvm"
+
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+nvm use 22
+
+pnpm lint
+pnpm typecheck
+pnpm test

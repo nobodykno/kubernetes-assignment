@@ -1,0 +1,39 @@
+{
+  "name": "@dam/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist"
+  },
+ 
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./logs": {
+      "types": "./dist/logs/index.d.ts",
+      "import": "./dist/logs/index.js"
+    },
+
+    "./constants" : {
+      "types": "./dist/constants/index.d.ts",
+      "import": "./dist/constants/index.js"
+    }
+
+  },
+
+
+  "dependencies": {
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+  }
+}

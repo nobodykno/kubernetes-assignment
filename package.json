@@ -1,0 +1,26 @@
+{
+    "name": "kubernetes-assignment",
+    "private": true,
+    "packageManager": "pnpm@11.20.0",
+    "scripts": {
+      "dev": "pnpm -r --parallel dev",
+      "build": "pnpm -r build",
+      "prepare": "husky",
+      "lint": "pnpm -r lint",
+      "test": "pnpm -r test",
+       "typecheck": "pnpm -r exec tsc --noEmit",
+      "clean": "pnpm -r clean"
+    },
+    "devDependencies": {
+      "@types/node": "^24.13.3",
+      "eslint": "^9.39.5",
+      "eslint-config-prettier": "^10.1.8",
+      "husky": "^9.1.7",
+      "lint-staged": "^17.3.0",
+      "prettier": "^3.9.6",
+      "tsx": "^4.23.7",
+      "turbo": "^2.10.8",
+      "typescript": "~6.0.3"
+    }
+  }
+  
