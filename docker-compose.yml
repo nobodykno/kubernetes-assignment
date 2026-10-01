@@ -1,3 +1,4 @@
+
 services:
   redis:
     image: redis:7-alpine
@@ -23,7 +24,7 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      -  .env.production
+      - .env.production
     depends_on:
       redis:
         condition: service_healthy
@@ -32,9 +33,23 @@ services:
     build:
       context: .
       dockerfile: services/worker/Dockerfile
+    restart: unless-stopped
     env_file:
       - .env.production
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  stats:
+    build:
+      context: .
+      dockerfile: services/stats/Dockerfile
+    container_name: stats-service
     restart: unless-stopped
+    ports:
+      - "3002:3002"
+    env_file:
+      - .env.production
     depends_on:
       redis:
         condition: service_healthy
