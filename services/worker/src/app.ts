@@ -11,7 +11,7 @@ export function createApp() {
   const app: Express = express();
   app.disable('x-powered-by');
 
-  // Prometheus scrapes this every 15-30 seconds
+
   app.get('/metrics', async (_req: Request, res: Response) => {
     res.setHeader('Content-Type', registry.contentType);
     res.send(await registry.metrics());
