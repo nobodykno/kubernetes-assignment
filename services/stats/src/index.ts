@@ -9,8 +9,9 @@ const server = app.listen(config.port, (error?: Error) => {
     console.error('Failed to start server:', error);
     process.exit(1);
   }
-  console.log(`api-gateway listening on port ${config.port}`);
+  console.log(`Stats service listening on port ${config.port}`);
 });
+
 
 function shutdown(signal: string): void {
   console.log(`${signal} received, shutting down`);

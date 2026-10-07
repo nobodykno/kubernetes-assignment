@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  QUEUE_NAME: "jobs"
+  JOB_TTL_SECONDS: "86400"
+
+  STATS_SERVICE_URL: "http://stats:3002"
+
+  UPSTREAM_TIMEOUT_MS: "3000"
+
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+
+  POLL_TIMEOUT_SECONDS: "5"
+
+  PRIMES_LIMIT: "10000"
+  BCRYPT_ROUNDS: "10"
+  SORT_SIZE: "10000"
+
+  LOG_REQUESTS: "true"
+  LOG_JOBS: "true"
