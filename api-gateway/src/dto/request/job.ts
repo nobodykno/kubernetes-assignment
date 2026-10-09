@@ -1,3 +1,8 @@
+
+/**
+ * DTO for request jobs
+ */
+
 import type { ParamsDictionary } from 'express-serve-static-core';
 export interface IPostJobRequest {
   type: string;  

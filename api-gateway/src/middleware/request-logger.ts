@@ -1,30 +1,20 @@
-import type { NextFunction, Request, Response } from 'express';
-import { config } from '@/config.js';
+import logs from 'shared/logs';
+import morgan from 'morgan';
+import type { Request } from 'express';
 
-const QUIET_PATHS = new Set(['/health', '/ready']);
+morgan.token('request-id', (req) => {
+  const request = req as Request;
 
-/** Logs one JSON line per request when the response has been sent. */
-export function requestLogger(req: Request, res: Response, next: NextFunction): void {
-  if (!config.logRequests || QUIET_PATHS.has(req.path)) {
-    next();
-    return;
-  }
+  return request.requestId;
+});
 
-  const start = process.hrtime.bigint();
+const stream = {
+  write: (message: string): void => {
+    logs.logger.http(message.trim());
+  },
+};
 
-  res.on('finish', () => {
-    const durationMs = Number(process.hrtime.bigint() - start) / 1_000_000;
-    console.log(
-      JSON.stringify({
-        time: new Date().toISOString(),
-        requestId: req.requestId,
-        method: req.method,
-        path: req.originalUrl,
-        status: res.statusCode,
-        durationMs: Math.round(durationMs * 10) / 10,
-      }),
-    );
-  });
-
-  next();
-}
+export const requestLogger = morgan(
+  ':date[iso] :method :url :status :response-time ms requestId=:request-id',
+  { stream }
+);

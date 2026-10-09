@@ -13,7 +13,10 @@ export interface Stats {
 
   inProgress: number;
 
+  deadLetterQueueLength: number;
   avgProcessingMs: number;
+
+  
 }
 
 
@@ -43,7 +46,11 @@ export async function readStats(): Promise<Stats> {
 
   const avgProcessingMs = completed > 0 ? round(totalDurationMs / completed) : 0;
 
-  return { submitted, completed, failed, queueLength, inProgress, avgProcessingMs };
+  const deadLetterQueueLength = await redis.llen(
+    keys.deadLetterQueue,
+  );
+
+  return { submitted, completed, failed, queueLength, inProgress, deadLetterQueueLength, avgProcessingMs };
 }
 
 

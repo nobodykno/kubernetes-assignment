@@ -1,20 +1,21 @@
 import { Counter, Histogram, Registry, collectDefaultMetrics } from 'prom-client';
-import { JOB_TYPES } from '@/keys.js';
+import FILE_CONSTANTS from 'shared/constants';
+
 
 export const registry = new Registry();
 
 collectDefaultMetrics({ register: registry });
 
 export const jobsProcessed = new Counter({
-  name: 'jobs_processed_total',
-  help: 'Total number of jobs processed successfully',
+  name: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.WORKER.JOB_PROCESSED_TOTAL.NAME,
+  help: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.WORKER.JOB_PROCESSED_TOTAL.HELP,
   labelNames: ['type'] as const,
   registers: [registry],
 });
 
 export const jobProcessingTime = new Histogram({
-  name: 'job_processing_time_seconds',
-  help: 'Time taken to process a job, in seconds',
+  name: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.WORKER.JOB_PROCESSING_TIME_SECONDS.NAME,
+  help: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.WORKER.JOB_PROCESSING_TIME_SECONDS.HELP,
   labelNames: ['type'] as const,
   // Jobs take roughly 5 ms to 500 ms; buckets cover that range with room to spare
   buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5],
@@ -22,15 +23,21 @@ export const jobProcessingTime = new Histogram({
 });
 
 export const jobErrors = new Counter({
-  name: 'job_errors_total',
-  help: 'Total number of jobs that failed',
+  name: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.WORKER.JOB_ERRORS_TOTAL.NAME,
+  help: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.WORKER.JOB_ERRORS_TOTAL.HELP,
   labelNames: ['type'] as const,
   registers: [registry],
 });
 
-// Start every job type at 0, so Grafana shows "0" instead of "No data"
-// before the first job of that type (or the first error) happens.
-for (const type of JOB_TYPES) {
+export const jobsDeadLettered = new Counter({
+  name: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.WORKER.JOBS_DEAD_LETTER.NAME,
+  help: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.WORKER.JOBS_DEAD_LETTER.HELP,
+  labelNames: ['type'] as const,
+  registers: [registry],
+});
+
+
+for (const type of FILE_CONSTANTS.sharedMetricsConstant.JOB_TYPES) {
   jobsProcessed.inc({ type }, 0);
   jobErrors.inc({ type }, 0);
 }

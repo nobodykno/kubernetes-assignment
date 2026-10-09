@@ -4,8 +4,10 @@ import { registry } from '@/metrics.js';
 import { redis } from '@/redis.js';
 import { workerState } from '@/worker.js';
 import express, { type Express } from 'express';
+import FILE_CONSTANTS from 'shared/constants';
+import logs from 'shared/logs';
 
-const STUCK_AFTER_MS = 60_000;
+const STUCK_AFTER_MS = FILE_CONSTANTS.routerAndTimer.TIMER.STUCK_AFTER_MS;
 
 export function createApp() {
   const app: Express = express();
@@ -23,7 +25,7 @@ export function createApp() {
     const idleMs = Date.now() - lastHeartbeat;
 
     if (!running || idleMs > STUCK_AFTER_MS) {
-      res.status(503).json({ status: 'unhealthy', running, idleMs });
+      res.status(FILE_CONSTANTS.HTTP_STATUS.SERVICE_UNAVAILABLE).json({ status: 'unhealthy', running, idleMs });
       return;
     }
     res.json({ status: 'ok', worker: config.workerId });
@@ -35,7 +37,12 @@ export function createApp() {
       await redis.ping();
       res.send('ready');
     } catch {
-      res.status(503).send('redis unavailable');
+      logs.logError({
+        action:FILE_CONSTANTS.MESSAGES.ACTION.READY,
+        module: FILE_CONSTANTS.MESSAGES.SERVICE.WORKER,
+        message: FILE_CONSTANTS.MESSAGES.MESSAGES.COMMON.API_NOT_READY
+      });
+      res.status(FILE_CONSTANTS.HTTP_STATUS.SERVICE_UNAVAILABLE).send(FILE_CONSTANTS.MESSAGES.MESSAGES.API_GATE_WAY.REDIS_NOT_AVAILABLE);
     }
   });
 

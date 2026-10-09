@@ -4,6 +4,7 @@ kind: Ingress
 
 metadata:
   name: api-gateway-ingress
+  namespace: microservices
 
 spec:
   ingressClassName: nginx

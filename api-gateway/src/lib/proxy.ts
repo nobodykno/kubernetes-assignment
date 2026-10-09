@@ -1,11 +1,11 @@
 import type { Request, Response } from 'express';
 import { config } from '@/config.js';
 import { HttpError } from '@/lib/http-error.js';
+import FILE_CONSTANTS from 'shared/constants';
 
 
 export function proxyGet(serviceName: string, baseUrl: string, targetPath: string) {
   return async (req: Request, res: Response): Promise<void> => {
-    // Keep the client's query string, e.g. /stats?foo=bar
     const queryIndex = req.url.indexOf('?');
     const query = queryIndex === -1 ? '' : req.url.slice(queryIndex);
     const url = new URL(targetPath + query, baseUrl);
@@ -15,7 +15,7 @@ export function proxyGet(serviceName: string, baseUrl: string, targetPath: strin
     res.status(upstream.status);
     const contentType = upstream.headers.get('content-type');
     if (contentType) res.setHeader('content-type', contentType);
-    res.send(await upstream.text());
+    res.send(await upstream.json());
   };
 }
 
@@ -34,8 +34,8 @@ async function fetchUpstream(
     });
   } catch (err) {
     if (err instanceof Error && err.name === 'TimeoutError') {
-      throw new HttpError(504, `${serviceName} service did not respond in time`);
+      throw new HttpError(FILE_CONSTANTS.HTTP_STATUS.GATEWAY_TIMEOUT, `${serviceName} service did not respond in time`);
     }
-    throw new HttpError(502, `${serviceName} service is unavailable`);
+    throw new HttpError(FILE_CONSTANTS.HTTP_STATUS.BAD_GATEWAY, `${serviceName} service is unavailable`);
   }
 }

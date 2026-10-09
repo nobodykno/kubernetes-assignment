@@ -11,10 +11,6 @@ import logger from "./logger.js";
  * Log success
  */
 const logError = (payload: ILog): void => {
-  if (process.env.NODE_ENV !== 'production') {
-    return;
-  }
-
   logger.error(payload);
 };
 

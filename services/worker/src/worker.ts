@@ -3,7 +3,7 @@ import { setImmediate as yieldToEventLoop, setTimeout as sleep } from 'node:time
 import { config } from '@/config.js';
 import { runJob } from '@/jobs/index.js';
 import { isJobType, keys } from '@/keys.js';
-import { jobErrors, jobProcessingTime, jobsProcessed } from '@/metrics.js';
+import { jobErrors, jobProcessingTime, jobsDeadLettered, jobsProcessed } from '@/metrics.js';
 import { blockingRedis, redis } from '@/redis.js';
 
 // ---------- Loop state (also used by the /healthz liveness probe) ----------
@@ -30,7 +30,7 @@ export async function runWorker(): Promise<void> {
       );
       
       const item = await blockingRedis.brpop(keys.queue, config.pollTimeoutSeconds);
-      console.log('BRPOP returned:', item);
+
       jobId = item?.[1];
     } catch (err) {
       if (!running) break; // connection closed on purpose during shutdown
@@ -62,12 +62,10 @@ export function stopWorker(): void {
 
 async function processJob(jobId: string): Promise<void> {
 
-  console.log("process",jobId)
-  const jobKey = keys.job(jobId);
-  console.log("process",jobId)
-  const type = await redis.hget(jobKey, 'type');
 
-  console.log("type",jobId)
+  const jobKey = keys.job(jobId);
+  const type = await redis.hget(jobKey, 'type');
+  
   if (type === null) {
     // The job hash expired or was deleted after being queued.
     console.warn(`Job ${jobId}: not found in Redis, skipping`);
@@ -82,13 +80,12 @@ async function processJob(jobId: string): Promise<void> {
 
   const metricType = isJobType(type) ? type : 'unknown';
   const start = performance.now();
-  console.log("metricType",metricType);
+  console.log('metricType',metricType);
   try {
     if (!isJobType(type)) {
-      throw new Error(`Unknown job type "${type}"`);
+      throw new Error('Unknown job type');
     }
-    console.log("type",type);
-
+ 
     const result = await runJob(type);
     const durationMs = roundMs(performance.now() - start);
 
@@ -109,18 +106,40 @@ async function processJob(jobId: string): Promise<void> {
   } catch (err) {
     const durationMs = roundMs(performance.now() - start);
     const message = err instanceof Error ? err.message : String(err);
-
+  
     await exec(
       redis
         .multi()
-        .hset(jobKey, { status: 'failed', error: message, durationMs, completedAt: Date.now() })
-        .incr(keys.failed),
+        .hset(jobKey, {
+          status: 'failed',
+          error: message,
+          durationMs,
+          completedAt: Date.now(),
+        })
+        .incr(keys.failed)
+        .rpush(
+          keys.deadLetterQueue,
+          JSON.stringify({
+            jobId,
+            type: metricType,
+            error: message,
+            failedAt: Date.now(),
+          }),
+        ),
     );
-
+  
     jobErrors.inc({ type: metricType });
-    console.error(`Job ${jobId} (${type}) failed after ${durationMs} ms: ${message}`);
+  
+    jobsDeadLettered.inc({
+      type: metricType,
+    });
+  
+    console.error(
+      `Job ${jobId} (${type}) failed after ${durationMs} ms: ${message}`,
+    );
   }
 }
+
 
 
 

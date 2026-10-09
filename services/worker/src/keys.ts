@@ -1,19 +1,20 @@
 import { config } from '@/config.js';
+import FILE_CONSTANTS from 'shared/constants';
 
 
 
-export const JOB_TYPES = ['primes', 'bcrypt', 'sort'] as const;
-export type JobType = (typeof JOB_TYPES)[number];
+export type JobType = (typeof FILE_CONSTANTS.sharedMetricsConstant.JOB_TYPES)[number];
 
 export function isJobType(value: unknown): value is JobType {
-  return typeof value === 'string' && (JOB_TYPES as readonly string[]).includes(value);
+  return typeof value === 'string' && (FILE_CONSTANTS.sharedMetricsConstant.JOB_TYPES as readonly string[]).includes(value);
 }
 
 export const keys = {
   queue: config.queueName,
   job: (id: string) => `job:${id}`,
-  submitted: 'stats:submitted',
-  completed: 'stats:completed',
-  failed: 'stats:failed',
-  totalDurationMs: 'stats:total_duration_ms',
+  submitted: FILE_CONSTANTS.sharedMetricsConstant.keys.REDIS_KEYS.SUBMITTED,
+  completed: FILE_CONSTANTS.sharedMetricsConstant.keys.REDIS_KEYS.COMPLETED,
+  failed: FILE_CONSTANTS.sharedMetricsConstant.keys.REDIS_KEYS.FAILED,
+  totalDurationMs: FILE_CONSTANTS.sharedMetricsConstant.keys.REDIS_KEYS.TOTAL_DURATION_MS,
+  deadLetterQueue: FILE_CONSTANTS.sharedMetricsConstant.keys.REDIS_KEYS.DEAD_LETTER_QUEUE
 } as const;

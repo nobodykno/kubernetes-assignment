@@ -1,4 +1,7 @@
 
+/**
+ * DTO for job response
+ */
 
 export type IJobStatus = 'queued' | 'processing' | 'completed' | 'failed';
 

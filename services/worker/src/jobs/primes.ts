@@ -9,7 +9,7 @@ export function primesJob(limit: number): string {
       largest = n;
     }
   }
-  console.log(`Found ${count} primes up to ${limit} (largest: ${largest})`)
+  console.log(`Found ${count} primes up to ${limit} (largest: ${largest})`);
   return `Found ${count} primes up to ${limit} (largest: ${largest})`;
 }
 
