@@ -9,14 +9,17 @@ import { sortJob } from '@/jobs/sort.js';
  * that gets saved in Redis and shown by GET /status/:id.
  */
 export async function runJob(type: JobType): Promise<string> {
-  console.log("type",type);
-  console.log("config",config)
   switch (type) {
-    case 'primes':
-      return primesJob(config.primesLimit);
-    case 'bcrypt':
-      return bcryptJob(config.bcryptRounds);
-    case 'sort':
-      return sortJob(config.sortSize);
+  case 'primes':
+    return primesJob(config.primesLimit);
+
+  case 'bcrypt':
+    return bcryptJob(config.bcryptRounds);
+
+  case 'sort':
+    return sortJob(config.sortSize);
+
+  default:
+    throw new Error(`Unsupported job type: ${type}`);
   }
 }

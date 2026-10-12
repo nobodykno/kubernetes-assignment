@@ -1,51 +1,85 @@
 import { Gauge, Registry, collectDefaultMetrics } from 'prom-client';
 import type { Stats } from '@/stats.js';
+import FILE_CONSTANTS from 'shared/constants';
 
 export const registry = new Registry();
 
 
 collectDefaultMetrics({ register: registry });
 
-
+/**
+ * Metric for total submitted jobs
+ */
 
 const totalJobsSubmitted = new Gauge({
-  name: 'total_jobs_submitted',
-  help: 'Total number of jobs submitted to the gateway',
+  name: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.TOTAL_JOBS_SUBMITTED.NAME,
+  help: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.TOTAL_JOBS_SUBMITTED.HELP,
   registers: [registry],
 });
+
+/**
+ * Metric for total completed jobs
+ */
+
 
 const totalJobsCompleted = new Gauge({
-  name: 'total_jobs_completed',
-  help: 'Total number of jobs completed successfully by all workers',
+  name: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.TOTAL_JOBS_COMPLETED.NAME,
+  help: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.TOTAL_JOBS_COMPLETED.HELP,
   registers: [registry],
 });
+
+/**
+ * Metric for queueLength
+ */
 
 const queueLength = new Gauge({
-  name: 'queue_length',
-  help: 'Number of jobs waiting in the Redis queue',
+  name: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.QUEUE_LENGTH.NAME,
+  help: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.QUEUE_LENGTH.HELP,
   registers: [registry],
 });
 
+/**
+ * Metric for total Jobs failed
+ */
 
 
 const totalJobsFailed = new Gauge({
-  name: 'total_jobs_failed',
-  help: 'Total number of jobs that failed',
+  name: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.TOTAL_JOBS_FAILED.NAME,
+  help: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.TOTAL_JOBS_FAILED.HELP,
   registers: [registry],
 });
+
+/**
+ * Metric for  Jobs  in progress
+ */
+
 
 const jobsInProgress = new Gauge({
-  name: 'jobs_in_progress',
-  help: 'Jobs taken by a worker but not finished yet',
+  name: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.JOBS_IN_PROGRESS.NAME,
+  help: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.JOBS_IN_PROGRESS.HELP,
   registers: [registry],
 });
+
+
+/**
+ * Metric for  avg processing time 
+ */
 
 const avgJobProcessingTime = new Gauge({
-  name: 'avg_job_processing_time_seconds',
-  help: 'Average processing time of successful jobs, in seconds (all-time)',
+  name: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.AVG_JOB_PROCESSING_TIME_SECONDS.NAME,
+  help:  FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.AVG_JOB_PROCESSING_TIME_SECONDS.HELP,
   registers: [registry],
 });
 
+
+/**
+ * Metric for dead-letter queue length
+ */
+const deadLetterQueueLength = new Gauge({
+  name: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.DEAD_LETTER_QUEUE_LENGTH.NAME,
+  help: FILE_CONSTANTS.sharedMetricsConstant.keys.METRICS.STATS.DEAD_LETTER_QUEUE_LENGTH.HELP,
+  registers: [registry],
+});
 
 export function updateMetrics(stats: Stats): void {
   totalJobsSubmitted.set(stats.submitted);
@@ -54,4 +88,5 @@ export function updateMetrics(stats: Stats): void {
   totalJobsFailed.set(stats.failed);
   jobsInProgress.set(stats.inProgress);
   avgJobProcessingTime.set(stats.avgProcessingMs / 1000);
+  deadLetterQueueLength.set(stats.deadLetterQueueLength);
 }

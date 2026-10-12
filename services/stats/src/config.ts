@@ -17,5 +17,5 @@ export const config = {
   // Redis
   redisHost: process.env.REDIS_HOST ?? 'localhost',
   redisPort: intFromEnv('REDIS_PORT', 6379),
-  queueName: process.env.QUEUE_NAME ?? 'jobs', // must match the gateway and worker
+  queueName: process.env.QUEUE_NAME ?? 'jobs', 
 } as const;

@@ -1,3 +1,7 @@
+/**
+ * DTO for Zod validation
+ */
+
 import type { z } from 'zod';
 
 export interface ValidationSchema {

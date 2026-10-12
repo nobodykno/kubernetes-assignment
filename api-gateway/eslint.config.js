@@ -7,7 +7,7 @@ export default defineConfig([
   {
     files: ['src/**/*.ts'],
 
-    extends: [tseslint.configs.recommendedTypeChecked],
+    extends: [tseslint.configs.recommended],
 
     plugins: {
       'no-relative-import-paths': noRelativeImportPaths,
@@ -21,6 +21,9 @@ export default defineConfig([
     },
 
     rules: {
+      semi: ['error', 'always'],
+      quotes: ['error', 'single'],
+      indent: ['error', 2],
       // Don't allow relative imports
       'no-relative-import-paths/no-relative-import-paths': [
         'error',

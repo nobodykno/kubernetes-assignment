@@ -1,6 +1,6 @@
 import { createApp } from '@/app.js';
 import { config } from '@/config.js';
-import { redis } from '@/redis.js';
+import { gracefulShutdown } from '@/utils/graceful-shutdown.js';
 
 const app = createApp();
 
@@ -13,18 +13,14 @@ const server = app.listen(config.port, (error?: Error) => {
 });
 
 
-function shutdown(signal: string): void {
-  console.log(`${signal} received, shutting down`);
+/**
+ * Graceful shutdown
+ */
 
-  server.close(() => {
-    void redis
-      .quit()
-      .catch(() => undefined)
-      .finally(() => process.exit(0));
-  });
+process.on('SIGTERM', () => {
+  gracefulShutdown(server, 'SIGTERM');
+});
 
-  setTimeout(() => process.exit(1), 10_000).unref();
-}
-
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGINT', () => {
+  gracefulShutdown(server, 'SIGINT');
+});

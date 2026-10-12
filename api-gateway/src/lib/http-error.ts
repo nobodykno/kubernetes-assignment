@@ -1,4 +1,7 @@
 
+/**
+ * Global class to handle global error
+ */
 export class HttpError extends Error {
   readonly status: number;
 

@@ -3,6 +3,7 @@ kind: HorizontalPodAutoscaler
 
 metadata:
   name: worker-hpa
+  namespace: microservices
 
 spec:
   scaleTargetRef:
