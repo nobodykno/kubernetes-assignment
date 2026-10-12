@@ -16,6 +16,7 @@ services:
       retries: 10
 
   api-gateway:
+    image: kubernetes-assignment-api-gateway:v1
     build:
       context: .
       dockerfile: api-gateway/Dockerfile
