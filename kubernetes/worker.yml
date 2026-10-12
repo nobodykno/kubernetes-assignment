@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: worker
   namespace: microservices
-
 spec:
   replicas: 2
 
@@ -19,7 +18,7 @@ spec:
     spec:
       containers:
         - name: worker
-          image: kubernetes-assignment-worker:v5
+          image: kubernetes-assignment-worker:v6
           imagePullPolicy: IfNotPresent
 
           ports:
@@ -59,7 +58,6 @@ metadata:
   namespace: microservices
   labels:
     app: worker
-
 spec:
   type: ClusterIP
 

@@ -16,7 +16,7 @@ services:
       retries: 10
 
   api-gateway:
-    image: kubernetes-assignment-api-gateway:v5
+    image: kubernetes-assignment-api-gateway:v6
     build:
       context: .
       dockerfile: api-gateway/Dockerfile
@@ -31,7 +31,7 @@ services:
         condition: service_healthy
 
   worker:
-    image: kubernetes-assignment-worker:v5 
+    image: kubernetes-assignment-worker:v6 
     build:
       context: .
       dockerfile: services/worker/Dockerfile

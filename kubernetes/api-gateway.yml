@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: kubernetes-assignment-api-gateway:v5
+          image: kubernetes-assignment-api-gateway:v6
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000

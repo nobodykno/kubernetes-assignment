@@ -15,7 +15,7 @@ export const keys = {
   job: (id: string) => `job:${id}`, 
   queue: config.queueName, //         
   submitted: FILE_CONSTANTS.sharedMetricsConstant.keys.REDIS_KEYS.SUBMITTED,
-  deadLetterQueue: FILE_CONSTANTS.sharedMetricsConstant.keys.REDIS_KEYS.DEAD_LETTER_QUEUE //     
+  deadLetterQueue: FILE_CONSTANTS.sharedMetricsConstant.keys.REDIS_KEYS.DEAD_LETTER_QUEUE 
 } as const;
 
 

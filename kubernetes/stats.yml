@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: stats
-          image: kubernetes-assignment-stats:v5
+          image: kubernetes-assignment-stats:v6
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3002
