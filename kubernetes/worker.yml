@@ -6,23 +6,36 @@ metadata:
 
 spec:
   replicas: 2
+
   selector:
     matchLabels:
       app: worker
+
   template:
     metadata:
       labels:
         app: worker
+
     spec:
       containers:
         - name: worker
           image: kubernetes-assignment-worker:v5
           imagePullPolicy: IfNotPresent
+
           ports:
             - containerPort: 3001
+
           envFrom:
             - configMapRef:
                 name: app-config
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
 
           readinessProbe:
             httpGet:
@@ -49,8 +62,11 @@ metadata:
 
 spec:
   type: ClusterIP
+
   selector:
     app: worker
+
   ports:
-    - port: 3001
+    - name: http
+      port: 3001
       targetPort: 3001

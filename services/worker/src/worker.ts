@@ -6,7 +6,7 @@ import { isJobType, keys } from '@/keys.js';
 import { jobErrors, jobProcessingTime, jobsDeadLettered, jobsProcessed } from '@/metrics.js';
 import { blockingRedis, redis } from '@/redis.js';
 
-// ---------- Loop state (also used by the /healthz liveness probe) ----------
+
 
 let running = false;
 let lastHeartbeat = Date.now();
@@ -33,13 +33,13 @@ export async function runWorker(): Promise<void> {
 
       jobId = item?.[1];
     } catch (err) {
-      if (!running) break; // connection closed on purpose during shutdown
+      if (!running) break; 
       console.error('Failed to read from queue, retrying in 1s:', (err as Error).message);
       await sleep(1000);
       continue;
     }
 
-    if (jobId === undefined) continue; // timed out: queue was empty, loop again
+    if (jobId === undefined) continue; 
 
     try {
       await processJob(jobId);
@@ -67,7 +67,6 @@ async function processJob(jobId: string): Promise<void> {
   const type = await redis.hget(jobKey, 'type');
   
   if (type === null) {
-    // The job hash expired or was deleted after being queued.
     console.warn(`Job ${jobId}: not found in Redis, skipping`);
     return;
   }

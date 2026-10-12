@@ -10,7 +10,7 @@ spec:
       app: api-gateway
   template:
     metadata:
-      labels:
+      labels: 
         app: api-gateway
     spec:
       containers:
