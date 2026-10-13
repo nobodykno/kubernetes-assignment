@@ -14,29 +14,34 @@ import logs from 'shared/logs';
  * @returns  JSON containing JobId, Status, Type
  */
 
-const submitWorkerType  = async(req: Request<object, IPostJobResponse, IPostJobRequest>, res: Response<IPostJobResponse>,  next: NextFunction) => {
-  const type = req.body.type ;
-  try{
+
+const submitWorkerType = async (
+  req: Request<object, IPostJobResponse, IPostJobRequest>,
+  res: Response<IPostJobResponse>,
+  next: NextFunction,
+): Promise<void> => {
+  const type = req.body.type;
+
+  try {
     const job = await enqueueJob(type);
+
     logs.logSuccess({
       action: FILE_CONSTANTS.MESSAGES.ACTION.JOB_POST,
-      message:`${FILE_CONSTANTS.MESSAGES.MESSAGES.API_GATE_WAY.JOB_POSTED_SUCCESSFULLY}${ job.jobId}`,
-      module:FILE_CONSTANTS.MESSAGES.SERVICE.API_GATEWAY,
+      message: `${FILE_CONSTANTS.MESSAGES.MESSAGES.API_GATE_WAY.JOB_POSTED_SUCCESSFULLY}${job.jobId}`,
+      module: FILE_CONSTANTS.MESSAGES.SERVICE.API_GATEWAY,
     });
-    return res.status(FILE_CONSTANTS.HTTP_STATUS.CREATED).json(job);
-  }
-  catch(error){
+
+    res.status(FILE_CONSTANTS.HTTP_STATUS.CREATED).json(job);
+  } catch (error) {
     logs.logError({
       action: FILE_CONSTANTS.MESSAGES.ACTION.JOB_POST,
-      message:FILE_CONSTANTS.MESSAGES.MESSAGES.API_GATE_WAY.JOB_POSTED_FAILED,
-      module:FILE_CONSTANTS.MESSAGES.SERVICE.API_GATEWAY,
+      message: FILE_CONSTANTS.MESSAGES.MESSAGES.API_GATE_WAY.JOB_POSTED_FAILED,
+      module: FILE_CONSTANTS.MESSAGES.SERVICE.API_GATEWAY,
     });
+
     next(error);
   }
-  const job = await enqueueJob(type);
-  res.status(FILE_CONSTANTS.HTTP_STATUS.CREATED).json(job);
 };
-
 
 /**
  * Get a job status
@@ -46,7 +51,7 @@ const submitWorkerType  = async(req: Request<object, IPostJobResponse, IPostJobR
  * @returns JSON matching to IJob
  */
 
-const getJobStatus  = async(req: Request<IJobId, IJob, object>, res: Response<IJob>,  next: NextFunction) => {
+const getJobStatus  = async(req: Request<IJobId, IJob, object>, res: Response<IJob>,  next: NextFunction):Promise<void> => {
   const request = req.params.id ;
   try{
     const job = await getJob(request);
@@ -55,7 +60,7 @@ const getJobStatus  = async(req: Request<IJobId, IJob, object>, res: Response<IJ
       message:`${FILE_CONSTANTS.MESSAGES.MESSAGES.API_GATE_WAY.JOB_STATUS_FETCHED_SUCCESSFULLY}${request}`,
       module:FILE_CONSTANTS.MESSAGES.SERVICE.API_GATEWAY,
     });
-    return res.status(FILE_CONSTANTS.HTTP_STATUS.OK).json(job!);
+    res.status(FILE_CONSTANTS.HTTP_STATUS.OK).json(job!);
   }
   catch(error){
     logs.logError({
@@ -76,7 +81,7 @@ const getJobStatus  = async(req: Request<IJobId, IJob, object>, res: Response<IJ
  * @returns JSON matching to IJob
  */
 
-const retryJob  = async(req: Request<IJobId, IJob, object>, res: Response<IPostJobResponse>,  next: NextFunction) => {
+const retryJob  = async(req: Request<IJobId, IPostJobResponse, object>, res: Response<IPostJobResponse>,  next: NextFunction):Promise<void> => {
   const request = req.params.id ;
   try{
     const job = await retryFailedJob(request);
@@ -85,7 +90,7 @@ const retryJob  = async(req: Request<IJobId, IJob, object>, res: Response<IPostJ
       message:`${FILE_CONSTANTS.MESSAGES.MESSAGES.API_GATE_WAY.JOB_RETRY_SUCCESS}${request}`,
       module:FILE_CONSTANTS.MESSAGES.SERVICE.API_GATEWAY,
     });
-    return res.status(FILE_CONSTANTS.HTTP_STATUS.OK).json(job);
+    res.status(FILE_CONSTANTS.HTTP_STATUS.OK).json(job);
   }
   catch(error){
     logs.logError({

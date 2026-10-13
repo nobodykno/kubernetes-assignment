@@ -9,7 +9,7 @@ export interface IJob {
   id: string;
   type: string;
   status: IJobStatus;
-  createdAt: number;
+  createdAt: string;
   startedAt?: number;
   completedAt?: number;
   durationMs?: number;

@@ -81,7 +81,7 @@ export async function getJob(id: string): Promise<IJob | null> {
     id: data.id,
     type: data.type,
     status: data.status as IJobStatus,
-    createdAt: Number(data.createdAt),
+    createdAt: (data.createdAt),
     startedAt: toNumber(data.startedAt),
     completedAt: toNumber(data.completedAt),
     durationMs: toNumber(data.durationMs),
